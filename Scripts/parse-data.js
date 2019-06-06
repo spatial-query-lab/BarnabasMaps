@@ -4,19 +4,23 @@ async function main()
     let index = 2;
 
     // While not done
-    //while(done === false)
-    //{
-    //    let response = await parseCSV(index);
-    //    alert(response);
-    //}
-    let response = await parseCSV(index);
+    while(done === false)
+    {
+        let response = await parseCSV(index);
+        
+        index++;
+        if(response === "Done!")
+        {
+            done = true;
+        }
+    }
 }
 
 async function parseCSV(index)
 {
     let response = await $.ajax({
         method: "post",
-        url: "../Scripts/parse-csv.php",
+        url: "../Data/CSVs/parse-csv.php",
         data:{index: index}
     });
 

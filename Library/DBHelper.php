@@ -116,8 +116,91 @@ class DBHelper
         $this->setConn(null);
     }
 
-    function CHECK_PLANT_EXISTS($name)
+    public function SELECT_TABLE_BY_NAME($tablename)
     {
+        if($this->conn == false)
+        {
+            echo "Could not establish a connection with the server.";
+            return false;
+        }
+        try {
+            // Getting database handler
+            $dbh = $this->conn;
+            $sth = $dbh->prepare('SELECT * FROM ' . $tablename);
+            if($sth->execute() == false)
+            {
+                echo "\nPDO::errorInfo():\n";
+                print_r($sth->errorInfo());
+                return false;
+            }
+            $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+            // Closing connection
+            $dbh = null;
+            $sth = null;
+            return $result;
+        } catch(PDOException $exception) {
+            return false;
+        }
+    }
 
+    public function GET_COORDINATES($plantid)
+    {
+        if($this->conn == false)
+        {
+            echo "Could not establish a connection with the server.";
+            return false;
+        }
+        try {
+            // Getting database handler
+            $dbh = $this->conn;
+            $sth = $dbh->prepare('SELECT * FROM `layers` WHERE `plant_id` = :plantid');
+            $sth->bindParam(':plantid', $plantid, PDO::PARAM_INT);
+
+            if($sth->execute() == false)
+            {
+                echo "\nPDO::errorInfo():\n";
+                print_r($sth->errorInfo());
+                return false;
+            }
+            $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+            // Closing connection
+            $dbh = null;
+            $sth = null;
+            return $result;
+        } catch(PDOException $exception) {
+            return false;
+        }
+    }
+
+    public function INSERT_REPORT($plantid, $number = 1, $lon, $lat)
+    {
+        if($this->conn == false)
+        {
+            echo "Could not establish a connection with the server.";
+            return false;
+        }
+        try {
+            // Getting database handler
+            $dbh = $this->conn;
+            $sth = $dbh->prepare('INSERT INTO `reports` (`plant_id`, `number`, `longitude`, `latitude`) VALUES (:plantid, :number, :lon, :lat)');
+            $sth->bindParam(':plantid', $plantid, PDO::PARAM_INT);
+            $sth->bindParam(':number', $number, PDO::PARAM_INT);
+            $sth->bindParam(':lon', $lon, PDO::PARAM_STR, strlen($lon));
+            $sth->bindParam(':lat', $lat, PDO::PARAM_STR, strlen($lat));
+            
+            if($sth->execute() == false)
+            {
+                echo "\nPDO::errorInfo():\n";
+                print_r($sth->errorInfo());
+                return false;
+            }
+            $result = $dbh->lastInsertId();
+            // Closing connection
+            $dbh = null;
+            $sth = null;
+            return $result;
+        } catch(PDOException $exception) {
+            return false;
+        }
     }
 }
