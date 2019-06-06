@@ -44,7 +44,6 @@ $plants = $db->SELECT_TABLE_BY_NAME("plants");
                         <h5 class="text-center">Change Plant</h5>
                     </div>
                     <div class="card-body">
-                        <label for="plant">Plant</label>
                         <select class="form-control" id="plant" name="plant">
                             <?php 
                                         foreach($plants as $plant)
@@ -56,10 +55,6 @@ $plants = $db->SELECT_TABLE_BY_NAME("plants");
                     </div>
                 </div>
             </div>
-            <div class="col" id="viewDiv"></div>
-        </div>
-        <div class="row mt-3 mb-3">
-            <div class="col-2"></div>
             <div class="col">
                 <div class="card">
                     <div class="card-header">
@@ -81,8 +76,8 @@ $plants = $db->SELECT_TABLE_BY_NAME("plants");
                             </div>
                             <div class="form-group">
                                 <label for="number">Number Found</label>
-                                <input type="text" class="form-control" id="number"
-                                    placeholder="Number of plants found" name="number">
+                                <input type="text" class="form-control" id="number" placeholder="Number of plants found"
+                                    name="number">
                             </div>
                             <div class="form-group">
                                 <label for="plantid">Plant</label>
@@ -102,7 +97,12 @@ $plants = $db->SELECT_TABLE_BY_NAME("plants");
                     </form>
                 </div>
             </div>
-            <div class="col-2"></div>
+
+        </div>
+        <div class="row mt-3 mb-3">
+            
+            <div class="col" id="viewDiv"></div>
+            
         </div>
 
     </main>

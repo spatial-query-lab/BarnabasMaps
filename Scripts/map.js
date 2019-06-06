@@ -1,15 +1,18 @@
 
 /************************************MAP CONTROLS****************************************/
 $(document).ready(() => {
-    map();
     getCoordinates();
 });
 
 function map(coordinates) {
-    require(["esri/Map", "esri/views/MapView", "esri/Graphic"], function (
+    
+    require(["esri/Map", "esri/views/MapView", "esri/Graphic", "esri/geometry/geometryEngine", "esri/geometry/Point", "esri/geometry/Multipoint"], function (
         Map,
         MapView,
-        Graphic
+        Graphic,
+        geometryEngine,
+        Point,
+        Multipoint
     ) {
         var map = new Map({
             basemap: "hybrid"
@@ -83,10 +86,8 @@ function map(coordinates) {
          ***************************/
 
         // Create a polygon geometry
-        var polygon = {
-            type: "polygon", // autocasts as new Polygon()
-            rings: coordinates
-        };
+        var pointArray = new Multipoint({points: coordinates}); 
+        var polygon = geometryEngine.convexHull(pointArray);
 
         // Create a symbol for rendering the graphic
         var fillSymbol = {
