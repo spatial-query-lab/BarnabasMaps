@@ -56,7 +56,7 @@ class CSVParser extends DBHelper
             $this->numberArray = null;
         }
 
-        preg_match_all('/(-\d+.\d+)|(\d+.\d+)|(-\d+)|(\d+)/m',  $fileContents, $this->numberArray);
+        preg_match_all('/\S+/m',  $fileContents, $this->numberArray);
     }
     /****************************************/
 
@@ -76,6 +76,11 @@ class CSVParser extends DBHelper
 
         foreach($numbers[0] as $number)
         {
+            if(!is_numeric($number))
+            {
+                continue;
+            }
+            
             // Longitude
             if($position == 0)
             {

@@ -6,86 +6,24 @@ $(document).ready(() => {
 
 function map(coordinates) {
     
-    require(["esri/Map", "esri/views/MapView", "esri/Graphic", "esri/geometry/geometryEngine", "esri/geometry/Point", "esri/geometry/Multipoint"], function (
+    require(["esri/Map", "esri/views/MapView", "esri/Graphic", "esri/geometry/geometryEngine", "esri/geometry/Point", "esri/geometry/Multipoint", "esri/layers/GraphicsLayer"], function (
         Map,
         MapView,
         Graphic,
         geometryEngine,
         Point,
-        Multipoint
+        Multipoint,
+        GraphicsLayer
     ) {
         var map = new Map({
             basemap: "hybrid"
-        });
-
-        var view = new MapView({
-            center: [-80, 35],
-            container: "viewDiv",
-            map: map,
-            zoom: 3
-        });
-
-        view.when(function () {
-            const sketch = new Sketch({
-                layer: layer,
-                view: view
-            });
-            //view.ui.add(sketch, "top-right");
-        });
-        // draw point
-        view.on("click", function (event) {
-            // Checking to make sure that there are no points on the map
-            if (view.graphics.length > 0) {
-                view.graphics.removeAll();
-            }
-            // Setting longitude and latitude
-            $('#longitude').val(event.mapPoint.longitude);
-            $('#latitude').val(event.mapPoint.latitude);
-            // First create a point geometry (this is the location of the Titanic)
-            var point = {
-                type: "point", // autocasts as new Point()
-                longitude: event.mapPoint.longitude,
-                latitude: event.mapPoint.latitude
-            };
-            // Create a symbol for drawing the point
-            var markerSymbol = {
-                type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-                color: [226, 119, 40],
-                outline: { // autocasts as new SimpleLineSymbol()
-                    color: [255, 255, 255],
-                    width: 2
-                }
-            };
-            // Create a graphic and add the geometry and symbol to it
-            var pointGraphic = new Graphic({
-                geometry: point,
-                symbol: markerSymbol,
-                popupTemplate: { // autocasts as new PopupTemplate()
-                    title: "{Name}",
-                    content: [{
-                        type: "fields",
-                        fieldInfos: [{
-                            fieldName: "Name"
-                        }, {
-                            fieldName: "Owner"
-                        }, {
-                            fieldName: "Length"
-                        }]
-                    }]
-                }
-            });
-            view.graphics.add(pointGraphic);
-        });
-        // Listen to the click event on the map view.
-        view.on("add", function (event) {
-            console.log("click event: ", event.mapPoint);
         });
 
         /***************************
          * Create a polygon graphic
          ***************************/
 
-        // Create a polygon geometry
+        // Create a polygon geometry using convex hull
         var pointArray = new Multipoint({points: coordinates}); 
         var polygon = geometryEngine.convexHull(pointArray);
 
@@ -106,8 +44,26 @@ function map(coordinates) {
             symbol: fillSymbol
         });
 
-        // Add the graphics to the view's graphics layer
-        view.graphics.addMany([polygonGraphic]);
+        // Create graphics layer for polygon
+        var layer = new GraphicsLayer({
+            graphics: [polygonGraphic]
+        });
+
+        console.log(polygon.centroid);
+        var view = new MapView({
+            center: polygon.centroid,
+            container: "viewDiv",
+            map: map,
+            zoom: 3
+        });
+
+        // draw point
+        view.on("click", function (event) {
+            
+        });
+
+        
+        map.add(layer);
     });
 }
 
